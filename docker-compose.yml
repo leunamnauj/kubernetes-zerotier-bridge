@@ -7,6 +7,7 @@ services:
       - NETWORK_ID=9b............34
       - ZTAUTHTOKEN=L..........v
       - AUTOJOIN=true
+      - ZTHOSTNAME=dummyhostname
 #      - ROUTES=10.10.12.0/23,10.147.20.115;10.10.14.0/23,10.147.20.220
     volumes:
       - './config/route.list:/config/route.list:ro'
