@@ -14,11 +14,13 @@ metadata:
   name: zerotier-networks
 data:
   NETWORK-1-ID: << your subnetid >>
+  ZTAUTHTOKEN: << your token >>
+  AUTOJOIN: true
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: ubernetes-zerotier-bridge
+  name: kubernetes-zerotier-bridge
 spec:
   containers:
     - name: ubernetes-zerotier-bridge
@@ -29,6 +31,21 @@ spec:
           configMapKeyRef:
             name: zerotier-networks
             key: NETWORK-1-ID 
+      - name: ZTHOSTNAME
+        valueFrom:
+          configMapKeyRef:
+            name: zerotier-networks
+            key: ZTHOSTNAME 
+      - name: ZTAUTHTOKEN
+        valueFrom:
+          configMapKeyRef:
+            name: zerotier-networks
+            key: ZTAUTHTOKEN 
+      - name: AUTOJOIN
+        valueFrom:
+          configMapKeyRef:
+            name: zerotier-networks
+            key: AUTOJOIN 
       securityContext:
           privileged: true
           capabilities:
@@ -59,7 +76,9 @@ Running this locally will let you test your ZT connection and also use it withou
 
 Modify docker compose file accordly.
 
-  - modify the `NETWORK_ID`
+  - `NETWORK_ID` with your networkId.
+  - `ZTHOSTNAME` hostname to identify this client. If not provided will keep it blank.
+  - `ZTAUTHTOKEN` your network token, required to perform auto join and set hostname
   - modify the `ROUTES` and use `<Remote Network>,<Zerotier node IP>;<another network>,<another Zerotier node IP>;...` if you would like to use Site-to-Site function between the networks. But do not forget to add the routes to your router too (because DHCP clients on LAN use default routes)!
   - You can use `config/route.list` files for route rules too. Check the example file for format. 
 
