@@ -16,6 +16,7 @@ RUN set -eux; \
         bash \
         iptables\
         openrc \
+        curl \
     ;\
     wget https://github.com/zerotier/ZeroTierOne/archive/$ZEROTIER_VERSION.zip -O /zerotier.zip; \
     unzip /zerotier.zip -d /; \
