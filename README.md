@@ -5,7 +5,7 @@ A Zerotier gateway to access your non-public k8s services thru ZT subnet
 
 
 ## Kubernetes
-Since this docker image expects the subnetID as an env variable you need to use something like this
+Since this docker image expects the subnetIDs as an env variable you need to use something like this
 ```
 ---
 apiVersion: v1
@@ -13,9 +13,10 @@ kind: ConfigMap
 metadata:
   name: zerotier-networks
 data:
-  NETWORK-1-ID: << your subnetid >>
+  NETWORK_IDS: << your subnetid >>
   ZTAUTHTOKEN: << your token >>
   AUTOJOIN: true
+  ZTHOSTNAME: << desired hostname>>
 ---
 apiVersion: v1
 kind: Pod
@@ -26,11 +27,11 @@ spec:
     - name: ubernetes-zerotier-bridge
       image: << your registry >>
       env:
-      - name: NETWORK_ID
+      - name: NETWORK_IDS
         valueFrom:
           configMapKeyRef:
             name: zerotier-networks
-            key: NETWORK-1-ID 
+            key: NETWORK_IDS 
       - name: ZTHOSTNAME
         valueFrom:
           configMapKeyRef:
@@ -54,8 +55,6 @@ spec:
             - SYS_ADMIN
             - CAP_NET_ADMIN
         volumeMounts:
-        - name: zerotierdata
-          mountPath: /var/lib/zerotier-one
         - name: dev-net-tun
           mountPath: /dev/net/tun
 
@@ -76,14 +75,12 @@ Running this locally will let you test your ZT connection and also use it withou
 
 Modify docker compose file accordly.
 
-  - `NETWORK_ID` with your networkId.
-  - `ZTHOSTNAME` hostname to identify this client. If not provided will keep it blank.
-  - `ZTAUTHTOKEN` your network token, required to perform auto join and set hostname
-  - modify the `ROUTES` and use `<Remote Network>,<Zerotier node IP>;<another network>,<another Zerotier node IP>;...` if you would like to use Site-to-Site function between the networks. But do not forget to add the routes to your router too (because DHCP clients on LAN use default routes)!
-  - You can use `config/route.list` files for route rules too. Check the example file for format. 
-
+  - `NETWORK_IDS` Comma separated networkIDs.
+  - `ZTAUTHTOKEN` Your network token, required to perform auto join and set hostname.
+  - `AUTOJOIN` Automatically accept new host.
+  - `ZTHOSTNAME` Hostname to identify this client. If not provided will keep it blank.
 ```
-docker-compose up -d
+docker-compose up
 ```
 
 
