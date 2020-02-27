@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  kubernetes-zerotier-bridge:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2020-02-27T00:06:16.228690032-03:00"
+    description: Kubernetes Zerotier Bridge
+    digest: 87abe367b816558d265b2cf2158fa5ea1e11c085cfb1ecb16edbd5eb3c36ea93
+    name: kubernetes-zerotier-bridge
+    urls:
+    - kubernetes-zerotier-bridge-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-02-27T00:06:16.228159135-03:00"
