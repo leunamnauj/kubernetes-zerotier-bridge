@@ -4,7 +4,18 @@
 A Zerotier gateway to access your non-public k8s services thru ZT subnet 
 
 
-## Kubernetes
+### Kubernetes
+
+## Helm chart to deploy a DaemonSet
+`helm repo add kubernetes-zerotier-bridge https://leunamnauj.github.io/kubernetes-zerotier-bridge/`
+
+`helm repo update`
+
+`helm install --name kubernetes-zerotier-bridge kubernetes-zerotier-bridge/kubernetes-zerotier-bridge`
+
+**Note:** You are able to configure persistence setting `persistentVolume.enabled=true` and further storage parameters as needed.
+
+## Single Deployment
 Since this docker image expects the subnetIDs as an env variable you need to use something like this
 ```
 ---
