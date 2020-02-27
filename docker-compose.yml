@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  zerotier:
+    image: verajm/kubernetes-zerotier-bridge
+    environment:
+      - NETWORK_IDS=A....B,C.......D,E.......F
+      - ZTAUTHTOKEN=A.......................Z
+      - AUTOJOIN=true
+      - ZTHOSTNAME=dummyhostname
+    volumes:
+      - /var/lib/zerotier-one:/var/lib/zerotier-one
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    network_mode: host
+    devices: 
+      - /dev/net/tun
+    privileged: true
+    restart: unless-stopped
