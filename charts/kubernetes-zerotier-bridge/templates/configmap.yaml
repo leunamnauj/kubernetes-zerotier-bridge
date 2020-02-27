@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name:         "zerotier-{{ .Values.environment }}-{{ .Release.Name }}"
+  namespace:    {{ .Release.Namespace }}
+  labels:
+    network:    {{ .Values.zerotier_config.zerotier_network_name }}
+    service:    {{ .Values.zerotier_config.zerotier_label_service }}
+data:
+  NETWORK-IDS:  {{ .Values.zerotier_config.zerotier_network_id }}
+  ZTAUTHTOKEN:  {{ .Values.zerotier_config.zerotier_api_accesstoken }}
+  AUTOJOIN:     "{{ .Values.zerotier_config.zerotier_authorize_member }}"
+  ZTHOSTNAME:   "{{ .Values.environment }}_out"

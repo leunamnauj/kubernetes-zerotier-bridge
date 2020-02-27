@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  creationTimestamp: null
+  name: zerotier-{{ .Values.zerotier_config.zerotier_network_name }}-bridge
+  namespace: {{ .Release.Namespace }}
+  labels:
+    network: {{ .Values.zerotier_config.zerotier_network_name }}
+    service: {{ .Values.zerotier_config.zerotier_label_service }}
+    environment: {{ .Values.environment }}
+spec:
+  imagePullPolicy: {{ .Values.image.pullPolicy }}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10%
+  selector:
+    matchLabels:
+      service: {{ .Values.zerotier_config.zerotier_label_service }}
+  template:
+    metadata:
+      labels:
+        network: {{ .Values.zerotier_config.zerotier_network_name }}
+        service: {{ .Values.zerotier_config.zerotier_label_service }}
+        environment: {{ .Values.environment }}
+    spec:
+      hostNetwork: true
+      containers:
+      - name: zerotier-{{ .Values.zerotier_config.zerotier_network_name }}-bridge
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        env:
+        - name: NETWORK_IDS
+          valueFrom:
+            configMapKeyRef:
+              name: zerotier-{{ .Values.environment }}-{{ .Release.Name }}
+              key: NETWORK-IDS 
+        - name: ZTHOSTNAME
+          valueFrom:
+            configMapKeyRef:
+              name: zerotier-{{ .Values.environment }}-{{ .Release.Name }}
+              key: ZTHOSTNAME 
+        - name: ZTAUTHTOKEN
+          valueFrom:
+            configMapKeyRef:
+              name: zerotier-{{ .Values.environment }}-{{ .Release.Name }}
+              key: ZTAUTHTOKEN 
+        - name: AUTOJOIN
+          valueFrom:
+            configMapKeyRef:
+              name: zerotier-{{ .Values.environment }}-{{ .Release.Name }}
+              key: AUTOJOIN 
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["NET_ADMIN", "NET_RAW","SYS_ADMIN"]
+        volumeMounts:
+        - name: dev-net-tun
+          mountPath: /dev/net/tun
+        - name: ztdata
+          mountPath: {{ .Values.persistentVolume.mountPath }}
+      volumes:
+      - name: dev-net-tun
+        hostPath:
+          path: /dev/net/tun
+      - name: ztdata
+{{- if .Values.persistentVolume.enabled }}
+        persistentVolumeClaim:
+          claimName: ztdata
+{{- else }}
+        emptyDir: {}
+{{- end }}

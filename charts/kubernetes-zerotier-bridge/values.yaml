@@ -1,0 +1,30 @@
+environment: "dummy"
+
+zerotier_config:
+  zerotier_network_id: "8........f,"
+  zerotier_network_name: "a................z"
+  zerotier_api_accesstoken: "L.....................v"
+  zerotier_authorize_member: true
+  zerotier_label_service: "zerotier"
+
+image:
+  repository: verajm/kubernetes-zerotier-bridge
+  tag: latest
+  pullPolicy: IfNotPresent
+
+resources: 
+  limits:
+    cpu: 0.8
+    memory: 512Mi
+  requests:
+    cpu: 0.1
+    memory: 64Mi
+
+persistentVolume:
+  enabled: false
+  # storageClass: "-"
+  accessModes:
+    - ReadWriteOnce
+  annotations: {}
+  mountPath: /var/lib/zerotier-one
+  size: 1Gi
