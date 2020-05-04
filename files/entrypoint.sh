@@ -25,7 +25,7 @@ do
       HOST_ID="$(zerotier-cli info | awk '{print $3}')"
       curl -s -XPOST \
         -H "Authorization: Bearer $ZTAUTHTOKEN" \
-        -d '{"hidden":"false","config":{"authorized":true}}' \
+        -d '{"hidden":"false","config":{"authorized":true, "activeBridge":true}}' \
         "https://my.zerotier.com/api/network/$NETWORK_ID/member/$HOST_ID"
 
       # # If hostname is provided will be set
