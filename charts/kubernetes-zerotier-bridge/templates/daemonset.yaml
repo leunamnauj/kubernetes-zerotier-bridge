@@ -9,7 +9,6 @@ metadata:
     service: {{ .Values.zerotier_config.zerotier_label_service }}
     environment: {{ .Values.environment }}
 spec:
-  imagePullPolicy: {{ .Values.image.pullPolicy }}
   updateStrategy:
     type: RollingUpdate
     rollingUpdate:
@@ -28,6 +27,7 @@ spec:
       containers:
       - name: zerotier-{{ .Values.zerotier_config.zerotier_network_name }}-bridge
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         env:
