@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           # relative path to the place where source code with Dockerfile is located
-          context: ./docker
+          context: .
           # Note: tags has to be all lower-case
           tags: |
             jakoberpf/github-runner:latest 
@@ -44,7 +44,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           # relative path to the place where source code with Dockerfile is located
-          context: ./docker
+          context: .
           # Note: tags has to be all lower-case
           tags: |
             jakoberpf/zerotier-bridge:latest 
@@ -55,7 +55,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           # relative path to the place where source code with Dockerfile is located
-          context: ./docker
+          context: .
           # Note: tags has to be all lower-case
           tags: jakoberpf/zerotier-bridge:${{ env.BRANCH }}
           # build on feature branches, push only on master branch
