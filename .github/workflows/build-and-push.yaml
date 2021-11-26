@@ -11,7 +11,7 @@ jobs:
   build-and-push-docker-image:
     name: Build Docker image and push to repositories
     # run only when code is compiling and tests are passing
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     # steps to perform in job
     steps:
@@ -20,7 +20,7 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-        
+
       # setup Docker buld action
       - name: Set up Docker Buildx
         id: buildx
