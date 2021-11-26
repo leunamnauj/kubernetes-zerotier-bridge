@@ -18,6 +18,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        
       # setup Docker buld action
       - name: Set up Docker Buildx
         id: buildx
@@ -40,6 +43,7 @@ jobs:
         with:
           # relative path to the place where source code with Dockerfile is located
           context: .
+          platforms: linux/amd64,linux/arm64
           # Note: tags has to be all lower-case
           tags: |
             jakoberpf/zerotier-bridge:latest 
@@ -51,6 +55,7 @@ jobs:
         with:
           # relative path to the place where source code with Dockerfile is located
           context: .
+          platforms: linux/amd64,linux/arm64
           # Note: tags has to be all lower-case
           tags: jakoberpf/zerotier-bridge:${{ env.BRANCH }} # ${{ env.TAG }}${{ env.BRANCH }}
           # build on feature branches, push only on master branch
