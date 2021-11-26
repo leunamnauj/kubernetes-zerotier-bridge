@@ -32,6 +32,9 @@ jobs:
       # - run: echo "TAG=${GITHUB_REF#refs/*/}" | tee -a $GITHUB_ENV
       # - run: echo "BRANCH=$(git branch -a --contains ${{ env.TAG }} | grep -v HEAD | cut -d '/' -f3)" | tee -a $GITHUB_ENV
 
+      - name: What
+        run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
       - name: Build image and push to Docker Hub and GitHub Container Registry
         uses: docker/build-push-action@v2
         with:
@@ -49,11 +52,11 @@ jobs:
           # relative path to the place where source code with Dockerfile is located
           context: .
           # Note: tags has to be all lower-case
-          tags: jakoberpf/zerotier-bridge:$branch # ${{ env.TAG }}${{ env.BRANCH }}
+          tags: jakoberpf/zerotier-bridge:${{ env.BRANCH }} # ${{ env.TAG }}${{ env.BRANCH }}
           # build on feature branches, push only on master branch
           push: ${{ github.ref != 'refs/heads/master' }}
-          # build-args: |
-          #     BRANCH=${{ env.BRANCH }} 
+          build-args: |
+              BRANCH=${{ env.BRANCH }} 
           # | sed -r 's,/,-,g'
 
       - name: Image digest
