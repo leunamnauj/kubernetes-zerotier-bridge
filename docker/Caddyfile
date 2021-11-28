@@ -1,0 +1,3 @@
+https://
+
+reverse_proxy traefik.traefik-system.svc.cluster.local:443

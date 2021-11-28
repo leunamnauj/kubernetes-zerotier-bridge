@@ -5,6 +5,7 @@
 A Zerotier gateway to access your non-public k8s services thru ZT subnet
 
 ### Kubernetes
+
 <https://github.com/Intelecy/ztsc>
 
 ## Helm chart to deploy a DaemonSet
@@ -32,6 +33,7 @@ data:
   ZTAUTHTOKEN: << your token >>
   AUTOJOIN: true
   ZTHOSTNAME: << desired hostname>>
+
 ---
 apiVersion: v1
 kind: Pod
