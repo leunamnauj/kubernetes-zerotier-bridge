@@ -1,0 +1,3 @@
+tasks:
+  - name: Set github global email
+    before: git config --global user.email "58260820+jakoberpf@users.noreply.github.com"
