@@ -1,0 +1,47 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  # define job to build and publish docker image
+  build-and-push-docker-image:
+    name: Build and Push Docker Image [master]
+    # run only when code is compiling and tests are passing
+    runs-on: self-hosted
+
+    # steps to perform in job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      # setup Docker buld action
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build image and push to Docker Hub tagged with "latest" and release version
+        uses: docker/build-push-action@v2
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: .
+          platforms: linux/amd64,linux/arm64
+          # Note: tags has to be all lower-case
+          tags: |
+            jakoberpf/zerotier-bridge:latest 
+          # build on feature branches, push only on master branch
+          push: ${{ github.ref == 'refs/heads/master' }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
