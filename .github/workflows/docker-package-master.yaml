@@ -32,7 +32,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           # relative path to the place where source code with Dockerfile is located
-          context: .
+          context: ./docker
           platforms: linux/amd64,linux/arm64
           # Note: tags has to be all lower-case
           tags: |
