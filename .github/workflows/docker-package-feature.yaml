@@ -10,9 +10,8 @@ jobs:
   build-and-push-docker-image:
     name: Build and Push Docker Image [feature]
 
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
-    # steps to perform in job
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -20,7 +19,6 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
-      # setup Docker buld action
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
