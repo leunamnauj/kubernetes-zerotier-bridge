@@ -16,7 +16,7 @@ FROM alpine:${ALPINE_VERSION}
 
 LABEL maintainer="contact@jakoberpf.de"
 
-RUN apk add --update --no-cache libc6-compat libstdc++ nss-tools jq
+RUN apk add --update --no-cache libc6-compat libstdc++ nss-tools jq curl
 
 COPY --from=zerotier /src/zerotier-one /usr/sbin/
 
@@ -33,6 +33,8 @@ RUN mkdir /etc/caddy/
 
 ADD Caddyfile /etc/caddy/Caddyfile
 
-ADD exec.sh /usr/local/bin
+ADD exec.sh /exec.sh
 
-CMD ["exec.sh"]
+RUN chmod 755 /exec.sh
+
+CMD ["/exec.sh"]

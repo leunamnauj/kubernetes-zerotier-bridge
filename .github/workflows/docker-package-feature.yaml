@@ -29,6 +29,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       # - run: echo "TAG=${GITHUB_REF#refs/*/}" | tee -a $GITHUB_ENV
       # - run: echo "BRANCH=$(git branch -a --contains ${{ env.TAG }} | grep -v HEAD | cut -d '/' -f3)" | tee -a $GITHUB_ENV
       - run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
@@ -40,7 +47,9 @@ jobs:
           context: ./docker
           platforms: linux/amd64,linux/arm64
           # Note: tags has to be all lower-case
-          tags: jakoberpf/zerotier-bridge:${{ env.BRANCH }} # ${{ env.TAG }}${{ env.BRANCH }}
+          tags: | # ${{ env.TAG }}${{ env.BRANCH }}
+            jakoberpf/zerotier-bridge:${{ env.BRANCH }} 
+            ghcr.io/jakoberpf/zerotier-bridge:${{ env.BRANCH }}
           # build on feature branches, push only on master branch
           push: ${{ github.ref != 'refs/heads/master' }}
           build-args: |
