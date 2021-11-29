@@ -4,10 +4,11 @@ services:
   zerotier:
     image: jakoberpf/zerotier-bridge
     environment:
-      - NETWORK_IDS=A....B,C.......D,E.......F
-      - ZTAUTHTOKEN=A.......................Z
+      - ZT_NETWORK_IDS=A....B,C.......D,E.......F
+      - ZT_HOSTNAME=dummy
+      - ZT_IP=XX.XX.XX.XX
+      - ZT_AUTHTOKEN=A.......................Z
       - AUTOJOIN=true
-      - ZTHOSTNAME=dummyhostname
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
