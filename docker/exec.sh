@@ -61,9 +61,10 @@ for network_id in $ZT_NETWORK_IDS; do
 			host_id="$(zerotier-cli info -j | jq -r .address)"
 			# If ip is provided will be set
 			if [ -n "$ZT_IP" ]; then 
-				echo "ZT Set ip address to $ZT_IP"
-				curl -X POST -H "Authorization: Bearer $ZT_AUTHTOKEN" -d '{"config":{"authorized":true,"ipAssignments":["10.147.19.50"]}}' "https://my.zerotier.com/api/network/$network_id/member/$host_id"
+				echo "ZT Authorizing member and set ip address to $ZT_IP"
+				curl -X POST -H "Authorization: Bearer $ZT_AUTHTOKEN" -d "{\"config\":{\"authorized\":true,\"ipAssignments\":[\"$ZT_IP\"]}}" "https://my.zerotier.com/api/network/$network_id/member/$host_id"
 			else
+				echo "ZT Authorizing member"
 				curl -X POST \
 					-H "Authorization: Bearer $ZT_AUTHTOKEN" \
 					-d '{"config":{"authorized":true}}' \
@@ -71,10 +72,16 @@ for network_id in $ZT_NETWORK_IDS; do
 			fi  
 			# If hostname is provided will be set
 			if [ -n "$ZT_HOSTNAME" ]; then
-				echo "ZT Set hostname"
-				curl -s -XPOST \
+				echo "ZT Set hostname to $ZT_HOSTNAME"
+				curl -s -X POST \
 					-H "Authorization: Bearer $ZT_AUTHTOKEN" \
 					-d "{\"name\":\"$ZT_HOSTNAME\"}" \
+					"https://my.zerotier.com/api/network/$network_id/member/$host_id"
+			else 
+				echo "ZT Set hostname to $hostname"
+				curl -s -X POST \
+					-H "Authorization: Bearer $ZT_AUTHTOKEN" \
+					-d "{\"name\":\"$hostname\"}" \
 					"https://my.zerotier.com/api/network/$network_id/member/$host_id"
 			fi
 	    fi
@@ -90,6 +97,19 @@ for network_id in $ZT_NETWORK_IDS; do
 done
 
 wait
+
+leave() {
+	echo "ZT Leaving networks"
+	for network_id in $ZT_NETWORK_IDS; do
+		(
+			host_id="$(zerotier-cli info -j | jq -r .address)"
+			curl -H "Authorization: bearer $ZT_AUTHTOKEN" -H "Content-Type: application/json" -X DELETE https://my.zerotier.com/api/network/$network_id/member/$host_id
+		)&
+	done
+}
+
+trap 'leave; exit 130' INT
+trap 'leave; exit 143' TERM
 
 echo "Starting Caddy server..."
 exec caddy run --adapter caddyfile --config "$CADDYFILE_PATH"
