@@ -62,13 +62,9 @@ for network_id in $ZT_NETWORK_IDS; do
 			# If ip is provided will be set
 			if [ -n "$ZT_IP" ]; then 
 				echo "ZT Set ip address to $ZT_IP"
-				echo "{\"config\":{\"authorized\":true,\"ipAssignments\":{\"${ZT_IP}\"}}}"
-				curl -XPOST \ 
-					-H "Authorization: Bearer $ZT_AUTHTOKEN" \
-					-d "{\"config\":{\"authorized\":true,\"ipAssignments\":{\"${ZT_IP}\"}}}" \ 
-					"https://my.zerotier.com/api/network/$network_id/member/$host_id"
+				curl -X POST -H "Authorization: Bearer $ZT_AUTHTOKEN" -d '{"config":{"authorized":true,"ipAssignments":["10.147.19.50"]}}' "https://my.zerotier.com/api/network/$network_id/member/$host_id"
 			else
-				curl -XPOST \
+				curl -X POST \
 					-H "Authorization: Bearer $ZT_AUTHTOKEN" \
 					-d '{"config":{"authorized":true}}' \
 					"https://my.zerotier.com/api/network/$network_id/member/$host_id"  
