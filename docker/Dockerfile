@@ -24,8 +24,8 @@ RUN mkdir -p /var/lib/zerotier-one \
   && ln -s /usr/sbin/zerotier-one /usr/sbin/zerotier-idtool \
   && ln -s /usr/sbin/zerotier-one /usr/sbin/zerotier-cli
 
-# rc-update add iptables
-# echo "tun" >> /etc/modules
+RUN rc-update add iptables; \ 
+    echo "tun" >> /etc/modules
 
 COPY --from=caddy /usr/bin/caddy /usr/bin/caddy
 
