@@ -16,7 +16,9 @@ FROM alpine:${ALPINE_VERSION}
 
 LABEL maintainer="contact@jakoberpf.de"
 
-RUN apk add --update --no-cache libc6-compat libstdc++ nss-tools jq curl
+RUN apk add --update --no-cache libc6-compat libstdc++ nss-tools jq curl npm
+
+RUN npm i -g @laduke/zerotier-central-cli
 
 COPY --from=zerotier /src/zerotier-one /usr/sbin/
 
