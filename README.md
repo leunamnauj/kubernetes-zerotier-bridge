@@ -1,14 +1,12 @@
-# Kubernetes Zerotier bridge
+# Kubernetes Zerotier Bridge
 
 ### *TL;DR*
 
-A Zerotier gateway to access your non-public k8s services thru ZT subnet
+A Zerotier gateway to access an kubernetes ingress though a ZT subnet. Indendet to be used for a distributet routing from a public gateway to a private kubernetes cluster. Currently only supports traefik as ingress and a single zerotier subnet.
 
-### Kubernetes
+**TODOs** Make configurable for different ingresses and subnets
 
-<https://github.com/Intelecy/ztsc>
-
-## Helm chart to deploy a DaemonSet
+## Helm chart to deploy a DaemonSet WIP
 
 `helm repo add kubernetes-zerotier-bridge https://jakoberpf.github.io/kubernetes-zerotier-bridge/`
 
@@ -22,49 +20,67 @@ A Zerotier gateway to access your non-public k8s services thru ZT subnet
 
 Since this docker image expects the subnetIDs as an env variable you need to use something like this
 
-```
+```yaml
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: zerotier-networks
 data:
-  NETWORK_IDS: << your subnetid >>
-  ZTAUTHTOKEN: << your token >>
-  AUTOJOIN: true
-  ZTHOSTNAME: << desired hostname>>
-
+  AUTOJOIN: << true or false >>
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: zerotier-secrets
+  namespace: zerotier
+data:
+  NETWORK_IDS: << your subnetids >>
+  ZT_AUTHTOKEN: << your token >>
+  ZT_HOSTNAME: << optional desired hostname>>
 ---
 apiVersion: v1
 kind: Pod
 metadata:
   name: kubernetes-zerotier-bridge
 spec:
-  containers:
-    - name: ubernetes-zerotier-bridge
-      image: << your registry >>
-      env:
-      - name: NETWORK_IDS
-        valueFrom:
-          configMapKeyRef:
-            name: zerotier-networks
-            key: NETWORK_IDS 
-      - name: ZTHOSTNAME
-        valueFrom:
-          configMapKeyRef:
-            name: zerotier-networks
-            key: ZTHOSTNAME 
-      - name: ZTAUTHTOKEN
-        valueFrom:
-          configMapKeyRef:
-            name: zerotier-networks
-            key: ZTAUTHTOKEN 
-      - name: AUTOJOIN
-        valueFrom:
-          configMapKeyRef:
-            name: zerotier-networks
-            key: AUTOJOIN 
-      securityContext:
+  selector:
+    matchLabels:
+      app: zerotier-bridge
+  template:
+    metadata:
+      labels:
+        app: zerotier-bridge
+    spec:
+      containers:
+      - name:  zerotier-bridge
+        image: jakoberpf/zerotier-bridge:implement-caddy
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: zerotier-configmap
+        env:
+        - name: NETWORK_IDS
+          valueFrom:
+            secretKeyRef:
+              name: zerotier-secrets
+              key: NETWORK_IDS 
+        - name: ZT_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: zerotier-secrets
+              key: ZT_HOSTNAME 
+        - name: ZT_AUTHTOKEN
+          valueFrom:
+            secretKeyRef:
+              name: zerotier-secrets
+              key: ZT_AUTHTOKEN 
+        - name: AUTOJOIN
+          valueFrom:
+            configMapKeyRef:
+              name: zerotier-configmap
+              key: AUTOJOIN 
+        securityContext:
           privileged: true
           capabilities:
             add:
@@ -72,8 +88,12 @@ spec:
             - SYS_ADMIN
             - CAP_NET_ADMIN
         volumeMounts:
-        - name: dev-net-tun
-          mountPath: /dev/net/tun
+          - name: dev-net-tun
+            mountPath: /dev/net/tun
+      volumes:
+      - name: dev-net-tun
+        hostPath:
+          path: /dev/net/tun
 
 ```
 
@@ -81,20 +101,22 @@ spec:
 
 ## Zerotier level config
 
-In order to route traffic to this POD have to add the proper rule on ZT Managed Routes section, to accomplish that you have to know the ZT address assigned to the pod and your Service and/or PODs subnet.
+In order to route traffic to this POD, you have to add the proper rule on ZT Managed Routes section or use an rreverse proxy to forwards the traffic.
 
-## Local Run
+### haproxy example
 
-Running this locally will let you test your ZT connection and also use it without install ZT at all
+```conf
+
+```
 
 ### Usage
 
 Modify docker compose file accordly.
 
 - `NETWORK_IDS` Comma separated networkIDs.
-- `ZTAUTHTOKEN` Your network token, required to perform auto join and set hostname.
+- `ZT_AUTHTOKEN` Your network token, required to perform auto join and set hostname.
+- `ZT_HOSTNAME` Hostname to identify this client. If not provided will keep it blank.
 - `AUTOJOIN` Automatically accept new host.
-- `ZTHOSTNAME` Hostname to identify this client. If not provided will keep it blank.
 
 ```
 docker-compose up
@@ -102,5 +124,7 @@ docker-compose up
 
 ## Inspired on
 
+- <https://github.com/Intelecy/ztsc>
+- <https://github.com/leunamnauj/kubernetes-zerotier-bridge>
 - <https://github.com/henrist/zerotier-one-docker>
 - <https://github.com/crocandr/docker-zerotier>
