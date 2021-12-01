@@ -56,35 +56,35 @@ for network_id in $ZT_NETWORK_IDS; do
 	    echo "ZT $network_id: Joining network... `zerotier-cli join "$network_id"`"
 
 	    # Auto accept the new client
-	    if [ $AUTOJOIN == "true"  ]; then
-			echo "ZT Auto accept the new client"
-			host_id="$(zerotier-cli info -j | jq -r .address)"
-			# If ip is provided will be set
-			if [ -n "$ZT_IP" ]; then 
-				echo "ZT Authorizing member and set ip address to $ZT_IP"
-				curl -X POST -H "Authorization: Bearer $ZT_AUTHTOKEN" -d "{\"config\":{\"authorized\":true,\"ipAssignments\":[\"$ZT_IP\"]}}" "https://my.zerotier.com/api/network/$network_id/member/$host_id"
-			else
-				echo "ZT Authorizing member"
-				curl -X POST \
-					-H "Authorization: Bearer $ZT_AUTHTOKEN" \
-					-d '{"config":{"authorized":true}}' \
-					"https://my.zerotier.com/api/network/$network_id/member/$host_id"  
-			fi  
-			# If hostname is provided will be set
-			if [ -n "$ZT_HOSTNAME" ]; then
-				echo "ZT Set hostname to $ZT_HOSTNAME"
-				curl -s -X POST \
-					-H "Authorization: Bearer $ZT_AUTHTOKEN" \
-					-d "{\"name\":\"$ZT_HOSTNAME\"}" \
-					"https://my.zerotier.com/api/network/$network_id/member/$host_id"
-			else 
-				echo "ZT Set hostname to $hostname"
-				curl -s -X POST \
-					-H "Authorization: Bearer $ZT_AUTHTOKEN" \
-					-d "{\"name\":\"$hostname\"}" \
-					"https://my.zerotier.com/api/network/$network_id/member/$host_id"
-			fi
-	    fi
+	    # if [ $AUTOJOIN == "true"  ]; then
+		# 	echo "ZT Auto accept the new client"
+		# 	host_id="$(zerotier-cli info -j | jq -r .address)"
+		# 	# If ip is provided will be set
+		# 	if [ -n "$ZT_IP" ]; then 
+		# 		echo "ZT Authorizing member and set ip address to $ZT_IP"
+		# 		curl -X POST -H "Authorization: Bearer $ZT_AUTHTOKEN" -d "{\"config\":{\"authorized\":true,\"ipAssignments\":[\"$ZT_IP\"]}}" "https://my.zerotier.com/api/network/$network_id/member/$host_id"
+		# 	else
+		# 		echo "ZT Authorizing member"
+		# 		curl -X POST \
+		# 			-H "Authorization: Bearer $ZT_AUTHTOKEN" \
+		# 			-d '{"config":{"authorized":true}}' \
+		# 			"https://my.zerotier.com/api/network/$network_id/member/$host_id"  
+		# 	fi  
+		# 	# If hostname is provided will be set
+		# 	if [ -n "$ZT_HOSTNAME" ]; then
+		# 		echo "ZT Set hostname to $ZT_HOSTNAME"
+		# 		curl -s -X POST \
+		# 			-H "Authorization: Bearer $ZT_AUTHTOKEN" \
+		# 			-d "{\"name\":\"$ZT_HOSTNAME\"}" \
+		# 			"https://my.zerotier.com/api/network/$network_id/member/$host_id"
+		# 	else 
+		# 		echo "ZT Set hostname to $hostname"
+		# 		curl -s -X POST \
+		# 			-H "Authorization: Bearer $ZT_AUTHTOKEN" \
+		# 			-d "{\"name\":\"$hostname\"}" \
+		# 			"https://my.zerotier.com/api/network/$network_id/member/$host_id"
+		# 	fi
+	    # fi
 
 		while ! has_ip $network_id; do
 			echo "ZT $network_id: waiting for IP(s)..."
