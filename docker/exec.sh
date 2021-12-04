@@ -102,3 +102,5 @@ leave() {
 
 trap 'leave; exit 130' INT
 trap 'leave; exit 143' TERM
+
+systemctl reload nginx
