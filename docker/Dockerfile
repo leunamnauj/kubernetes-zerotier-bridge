@@ -20,4 +20,4 @@ ADD exec.sh /exec.sh
 
 RUN chmod 755 /exec.sh
 
-CMD ["/exec.sh"]
+# CMD ["/exec.sh"]
