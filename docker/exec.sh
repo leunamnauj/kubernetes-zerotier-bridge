@@ -4,9 +4,6 @@ set -e
 
 : "${ZT_NETWORK_IDS?"ZT Need to set ZT_NETWORK_IDS"}"
 
-# set default path
-: "${CADDYFILE_PATH:=/etc/caddy/Caddyfile}"
-
 if [ -n "$ZT_IDENTITY_PUBLIC" ]; then
 	echo "$ZT_IDENTITY_PUBLIC" > /var/lib/zerotier-one/identity.public
 elif [ -n "$ZT_IDENTITY_PUBLIC_PATH" ]; then
@@ -27,11 +24,6 @@ fi
 if [ ! -f /var/lib/zerotier-one/identity.public ]; then
 	echo "ZT /var/lib/zerotier-one/identity.public not found! Will generate my own public identity..."
 	zerotier-idtool getpublic /var/lib/zerotier-one/identity.secret > /var/lib/zerotier-one/identity.public
-fi
-
-if [ ! -f "$CADDYFILE_PATH" ]; then
-	echo "$CADDYFILE_PATH not found!"
-	exit 1
 fi
 
 # start zerotier and daemonize
@@ -110,6 +102,3 @@ leave() {
 
 trap 'leave; exit 130' INT
 trap 'leave; exit 143' TERM
-
-echo "Starting Caddy server..."
-exec caddy run --adapter caddyfile --config "$CADDYFILE_PATH"
