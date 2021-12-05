@@ -16,8 +16,6 @@ RUN rc-update add iptables; \
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY passthrough.conf /etc/nginx/passthrough.conf
 
-ADD exec.sh /exec.sh
+ADD init-zerotier.sh /docker-entrypoint.d/40-init-zerotier.sh
 
-RUN chmod 755 /exec.sh
-
-# CMD ["/exec.sh"]
+RUN chmod 755 /docker-entrypoint.d/40-init-zerotier.sh
