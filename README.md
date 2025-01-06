@@ -1,5 +1,7 @@
 # Kubernetes Zerotier bridge 
 
+**⚠️ This project is no longer maintained and has been archived. It is now read-only.**
+
 ### *TL;DR*
 A Zerotier gateway to access your non-public k8s services thru ZT subnet 
 
